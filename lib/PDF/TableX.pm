@@ -7,55 +7,40 @@ use MooseX::Types::Moose qw/Int/;
 use Carp;
 use PDF::API2;
 
-use PDF::TableX::Types qw/StyleDefinition/;
 use PDF::TableX::Row;
 use PDF::TableX::Column;
 use PDF::TableX::Cell;
 
-our $ATTRIBUTES = [ qw/padding border_width border_color border_style background_color/ ];
+with 'PDF::TableX::Stylable';
+
 our $VERSION    = '0.01';
 
 # public attrs
-has width   => (is => 'rw', isa => 'Num', default => 0);
-has start_x => (is => 'rw', isa => 'Num', default => 0);
-has start_y => (is => 'rw', isa => 'Num', default => 0);
-has rows	  => (is => 'ro', isa => 'Int', default => 0);
-has cols	  => (is => 'ro', isa => 'Int', default => 0);
-has padding => (is => 'rw', isa => StyleDefinition, coerce => 1, default => sub{[1,1,1,1]} );
-has border_width => (is => 'rw', isa => StyleDefinition, coerce => 1, default => sub{[1,1,1,1]} );
-has border_color => (is => 'rw', isa => StyleDefinition, coerce => 1, default => 'black' );
-has border_style => (is => 'rw', isa => StyleDefinition, coerce => 1, default => 'solid' );
-has background_color => (is => 'rw', isa => 'Str', default => '' );
+has width         => (is => 'rw', isa => 'Num', default => 0);
+has start_x       => (is => 'rw', isa => 'Num', default => 0);
+has start_y       => (is => 'rw', isa => 'Num', default => 0);
+has rows	        => (is => 'ro', isa => 'Int', default => 0);
+has cols	        => (is => 'ro', isa => 'Int', default => 0);
+has repeat_header => (is => 'rw', isa => 'Bool', default => 0);
 
 # private attrs
-has _rows => (is => 'ro', init_arg => undef, isa => 'ArrayRef[ Object ]', default => sub {[]});
 has _cols => (is => 'ro', init_arg => undef, isa => 'ArrayRef[ Object ]', default => sub {[]});
-has _attributes => (is => 'ro', init_arg => undef, isa => 'ArrayRef', default => sub{
-	$ATTRIBUTES;
-});
 
-# method modifiers
-for my $func ( @{ $ATTRIBUTES } ) {
-	around $func => sub {
-		my ($orig, $self, $value) = @_;
-		if ( $value ) {
-			$self->$orig($value);
-			for (@{$self->{_rows}}) {
-				$_->$func( $value );
-			}
-			return $self;
-		} else {
-			return $self->$orig;
-		}		
-	};
+use overload '@{}' => sub { return $_[0]->{_children}; }, fallback => 1;
+
+for my $attr qw/width repeat_header/ {
+	around $attr => sub {
+		my $orig = shift;
+		my $self = shift;
+		return $self->$orig() unless @_;
+		$self->$orig(@_);
+		return $self;
+	}
 }
-
-use overload '@{}' => sub { return $_[0]->{_rows}; }, fallback => 1;
 
 # overridden methods
 override BUILDARGS => sub {
 	my $class = shift;
-	
 	if (@_ == 2 and Int->check($_[0]) and Int->check($_[1])) {
 		return { 
 			cols    => $_[0],
@@ -65,7 +50,6 @@ override BUILDARGS => sub {
 			start_y => 287 / 25.4 *72,
 		};
 	}
-	
 	return super;
 };
 
@@ -93,14 +77,14 @@ sub _create_initial_struct {
 
 sub properties {
 	my ($self, @attrs) = @_;
-	@attrs = ( scalar(@attrs) ) ? @attrs : @{ $self->{_attributes} };
+	@attrs = scalar(@attrs) ? @attrs : $self->attributes;
 	return (map { $_ => $self->$_ } @attrs);
 }
 
 sub add_row {
 	my ($self, $row) = @_;
 	$self->{rows}++;
-	push @{$self->{_rows}}, $row;
+	push @{$self->{_children}}, $row;
 }
 
 sub col {
@@ -119,13 +103,32 @@ sub draw {
 	my $page = $pdf->openpage($page_no) || $pdf->page;
 	$self->_set_col_widths();
 	# get gfx, txt page objects in proper order to prevent from background hiding the text
-	my ($bg_gfx, $bg_txt, $ct_gfx, $ct_txt, $bd_gfx, $bd_txt) = ($page->gfx, $page->text, $page->gfx, $page->text, $page->gfx, $page->text);
-	for (@{$self->{_rows}}) {
-		$_->height( $_->draw_content($self->start_x, $self->start_y, $ct_gfx, $ct_txt) );
-		$_->draw_background($self->start_x, $self->start_y, $bg_gfx, $bg_txt);
-		$_->draw_borders($self->start_x, $self->start_y, $bd_gfx, $bd_txt);
-		$self->{start_y} -= $_->height;
+	my @states = ($page->gfx, $page->text, $page->gfx, $page->text, $page->gfx, $page->text);
+ROW:
+	for (@{$self->{_children}}) {
+		my ($row_height, $overflow) = $self->_draw_row( $_,  @states );
+		if ( $overflow ) {
+			$page = $pdf->page;
+			$self->{start_y} = [ $page->get_mediabox ]->[3] - $self->margin->[0];
+			@states = ($page->gfx, $page->text, $page->gfx, $page->text, $page->gfx, $page->text);
+			if ( $self->repeat_header ) {
+				my ($row_height, $overflow) = $self->_draw_row( $self->[0], @states );
+				$self->{start_y} -= $row_height;
+			}
+			redo ROW;
+		} else {
+			$self->{start_y} -= $row_height;
+		}
 	}
+}
+
+sub _draw_row {
+	my ($self, $row, @states) = @_;
+	my ($row_height, $overflow) =	$row->draw_content($self->start_x, $self->start_y, $states[4], $states[5] );
+	$row->height( $row_height );
+	$row->draw_background($self->start_x, $self->start_y, $states[0], $states[1]);
+	$row->draw_borders($self->start_x, $self->start_y, $states[2], $states[3]);
+	return ($row_height, $overflow);
 }
 
 sub _set_col_widths {
@@ -167,12 +170,10 @@ sub is_last_in_col {
 
 sub cycle_background_color {
 	my ($self, @colors) = @_;
-	
 	my $length = (scalar @colors);
 	for (0..$self->rows-1) {
 		$self->[$_]->background_color( $colors[ $_ % $length ] );
 	}
-	
 	return $self;
 }
 

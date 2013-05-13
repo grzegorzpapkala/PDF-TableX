@@ -9,7 +9,11 @@ my $table = PDF::TableX->new(2,2);
 my $pdf		= PDF::API2->new();
 $pdf->mediabox('a4');
 
-$table->padding(10);
+$table
+	->padding(10)
+	->text_align('justify')
+	->font_size(8)
+	->border_width(0);
 
 my $texts = [];
 while (<DATA>) {

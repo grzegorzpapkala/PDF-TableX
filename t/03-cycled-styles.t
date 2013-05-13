@@ -1,6 +1,6 @@
 #!perl -T
 
-use Test::More tests => 2;
+use Test::More;
 
 use PDF::TableX;
 use PDF::API2;
@@ -11,16 +11,25 @@ $pdf->mediabox('a4');
 
 $table
 	->padding(20)
-	->cycle_background_color('#333333','#cccccc', '#999999');
+	->cycle_background_color('#FFE100','#FF001E', '#9EFF00');
 
-is($table->[0]->background_color(), '#333333');
-is($table->[3]->background_color(), '#333333');
+$table->col(2)->background_color('blue');
+
+is($table->[0]->background_color(), '#FFE100');
+is($table->[3]->background_color(), '#FFE100');
 
 $table->[2][2]
 	->border_width(10)
-	->background_color('red');
-
+	->background_color('#cccccc')
+	->font_color('black')
+	->content('LOREM IPSUM')
+	->font_size(20)
+	->text_align('center')
+	->font('Helvetica-Bold');
+	
 $table->draw($pdf, 1);
 $pdf->saveas('t/03-cycled-styles.pdf');
 
 diag( "Testing PDF::TableX $PDF::TableX::VERSION, Perl $], $^X" );
+
+done_testing;

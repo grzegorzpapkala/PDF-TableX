@@ -4,43 +4,28 @@ use Moose;
 use MooseX::Types;
 use PDF::API2;
 
-use PDF::TableX::Types qw/StyleDefinition/;
 with 'PDF::TableX::Drawable';
-
-our $ATTRIBUTES = [ qw/padding border_width border_color border_style background_color content font_color font_size text_align/ ];
+with 'PDF::TableX::Stylable';
 
 has width     => (is => 'rw', isa => 'Num');
 has min_width => (is => 'rw', isa => 'Num', lazy => 1, builder => '_get_min_width');
 has reg_width => (is => 'rw', isa => 'Num', lazy => 1, builder => '_get_reg_width');
-has height  => (is => 'rw', isa => 'Num', lazy => 1, builder => '_get_height' );
-has content => (is => 'rw', isa => 'Str', default=> '');
-has padding => (is => 'rw', isa => StyleDefinition, coerce => 1, default => sub{[1,1,1,1]} );
-has border_width => (is => 'rw', isa => StyleDefinition, coerce => 1, default => sub{[1,1,1,1]} );
-has border_color => (is => 'rw', isa => StyleDefinition, coerce => 1, default => 'black' );
-has border_style => (is => 'rw', isa => StyleDefinition, coerce => 1, default => 'solid' );
-has font				 => (is => 'rw', isa => 'Any', default => 'Times');
-has font_color   => (is => 'rw', isa => 'Str', default => 'black');
-has font_size    => (is => 'rw', isa => 'Num', default => 12);
-has text_align	 => (is => 'rw', isa => 'Str', default => 'left');
-has background_color => (is => 'rw', isa => 'Str', default => '' );
+has height    => (is => 'rw', isa => 'Num', lazy => 1, builder => '_get_height' );
+has content   => (is => 'rw', isa => 'Str', default=> '', trigger => sub { $_[0]->{_overflow} = $_[0]->content; });
 
+has _overflow        => (is => 'ro', isa => 'Str', init_arg => undef, default => '');
 has _pdf_api_content => (is => 'ro', isa => class_type('PDF::API2::Page'), lazy => 1, builder => '_get_content');
-has _parent	 => (is => 'ro', isa => 'Object');
-has _row_idx => (is => 'ro', isa => 'Int', default => 0);
-has _col_idx => (is => 'ro', isa => 'Int', default => 0);
+has _parent	         => (is => 'ro', isa => 'Object');
+has _row_idx         => (is => 'ro', isa => 'Int', default => 0);
+has _col_idx         => (is => 'ro', isa => 'Int', default => 0);
 
-# method modifiers
-for my $func ( @{ $ATTRIBUTES } ) {
-	around $func => sub {
-		my ($orig, $self, $value) = @_;
-		if ( $value ) {
-			$self->$orig($value);
-			return $self;
-		} else {
-			return $self->$orig;
-		}		
-	};
-}
+around 'content' => sub {
+	my $orig = shift;
+	my $self = shift;
+	return $self->$orig() unless @_;
+	$self->$orig(@_);
+	return $self;
+};
 
 sub _get_content { return PDF::API2->new()->page; }
 
@@ -78,19 +63,34 @@ sub _get_height {
 sub draw_content {
 	my ($self, $x, $y, $gfx, $txt) = @_;
 	$y -= $self->padding->[0] + $self->font_size;
-	$x += $self->padding->[3];
+	$x += $self->padding->[3]
+		+ ($self->text_align eq 'right'  ? $self->get_text_width   : 0)
+		+ ($self->text_align eq 'center' ? $self->get_text_width/2 : 0)
+	;
 	my $width = 0;
 	$txt->save;
 	$txt->font( PDF::API2->new()->corefont( $self->font ), $self->font_size );
 	$txt->lead( $self->font_size );
 	$txt->fillcolor( $self->font_color );
 	$txt->translate($x, $y);
-	for my $p ( split ( "\n", $self->content ) ) {
-		$txt->paragraph($p, $self->get_text_width, 10000, -spillover => 0);
+	my $overflow = '';
+	for my $p ( split ( "\n", $self->{_overflow} ) ) {
+		if ($overflow) {
+			$overflow .= "\n" . $p;
+		} else {
+			$overflow = $txt->paragraph($p, $self->get_text_width, ($y-$self->margin->[2]-$self->padding->[2]+$self->font_size), -spillover => 0, -align => $self->text_align);
+		}
 	}
+	$self->{_overflow} = $overflow;
 	$self->height( $y - [ $txt->textpos() ]->[1] + $self->padding->[0] + $self->padding->[2]);
 	$txt->restore;
-	return ($self->get_text_width, $self->height);
+	return ($self->get_text_width, $self->height, length($overflow));
+}
+
+sub reset_content {
+	my ($self) = @_;
+	$self->{_overflow} = $self->content;
+	return $self;
 }
 
 sub get_text_width {

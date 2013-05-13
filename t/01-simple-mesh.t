@@ -1,6 +1,6 @@
 #!perl -T
 
-use Test::More tests => 10;
+use Test::More;
 
 use PDF::TableX;
 use PDF::API2;
@@ -11,11 +11,16 @@ $pdf->mediabox('a4');
 
 is_deeply( $table->padding, [1,1,1,1], 'Default padding settings');
 is_deeply( { $table->properties }, {
-	'padding' => [1,1,1,1],
-	'border_width' => [1,1,1,1],
-	'border_color' => ['black','black','black','black'],
-	'border_style' => ['solid','solid','solid','solid'],
+	'padding'          => [1,1,1,1],
+	'border_width'     => [1,1,1,1],
+	'border_color'     => ['black','black','black','black'],
+	'border_style'     => ['solid','solid','solid','solid'],
 	'background_color' => '',
+	'text_align'			 => 'left',
+	'font_size'				 => 12,
+	'font'     				 => 'Times',
+	'font_color'  		 => 'black',
+	'margin'					 => [10/25.4*72,10/25.4*72,10/25.4*72,10/25.4*72],
 }, 'Check all default style values' );
 
 $table->padding(10);
@@ -38,12 +43,14 @@ for my $i (0..$table->rows-1) {
 				->background_color('black')
 				->content('black')
 				->font_color('white')
-				->font_size(10);
+				->font_size(10)
+				->text_align('right');
 		} else {
 			$table->[$i][$j]
 				->content('white')
 				->font_color('black')
-				->font_size(10);		
+				->font_size(10)
+				->text_align('center');
 		}
 	}
 }
@@ -54,3 +61,5 @@ $table->draw($pdf, 1);
 $pdf->saveas('t/01-simple-mesh.pdf');
 
 diag( "Testing PDF::TableX $PDF::TableX::VERSION, Perl $], $^X" );
+
+done_testing;

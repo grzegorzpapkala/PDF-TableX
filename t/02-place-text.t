@@ -1,6 +1,6 @@
 #!perl -T
 
-use Test::More tests => 4;
+use Test::More;
 
 use PDF::TableX;
 use PDF::API2;
@@ -31,3 +31,5 @@ $table->draw($pdf, 1);
 $pdf->saveas('t/02-place-text.pdf');
 
 diag( "Testing PDF::TableX $PDF::TableX::VERSION, Perl $], $^X" );
+
+done_testing;

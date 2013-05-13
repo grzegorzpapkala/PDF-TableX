@@ -4,52 +4,35 @@ use Moose;
 use MooseX::Types;
 
 with 'PDF::TableX::Drawable';
+with 'PDF::TableX::Stylable';
 
-use PDF::TableX::Types qw/StyleDefinition/;
 use PDF::TableX::Cell;
-
-our $ATTRIBUTES = [ qw/padding border_width border_color border_style background_color height/ ];
 
 has cols	  => (is => 'ro', isa => 'Int', default => 0);
 has width   => (is => 'rw', isa => 'Num');
 has height  => (is => 'rw', isa => 'Num');
-has padding => (is => 'rw', isa => StyleDefinition, coerce => 1, default => sub{[1,1,1,1]} );
-has border_width => (is => 'rw', isa => StyleDefinition, coerce => 1, default => sub{[1,1,1,1]} );
-has border_color => (is => 'rw', isa => StyleDefinition, coerce => 1, default => 'black' );
-has border_style => (is => 'rw', isa => StyleDefinition, coerce => 1, default => 'solid' );
-has background_color => (is => 'rw', isa => 'Str', default => '' );
 
 has _row_idx    => (is => 'ro', isa => 'Int', default => 0);
 has _parent		  => (is => 'ro', isa => 'Object');
-has _cells	    => (is => 'ro', init_arg => undef, isa => 'ArrayRef', default => sub{[]});
-has _attributes => (is => 'ro', init_arg => undef, isa => 'ArrayRef', default => sub{
-	$ATTRIBUTES;
-});
 
-use overload '@{}' => sub { return $_[0]->{_cells} }, fallback => 1;
+use overload '@{}' => sub { return $_[0]->{_children} }, fallback => 1;
 
-# method modifiers
-for my $func ( @{ $ATTRIBUTES } ) {
-	around $func => sub {
-		my ($orig, $self, $value) = @_;
-		if ( $value ) {
-			$self->$orig($value);
-			for (@{$self->{_cells}}) {
-				$_->$func( $value );
-			}
-			return $self;
-		} else {
-			return $self->$orig;
-		}		
-	};
-}
+around 'height' => sub {
+	my $orig = shift;
+	my $self = shift;
+	return $self->$orig() unless @_;
+	for (@{ $self->{_children} }) { $_->height(@_) };
+	$self->$orig(@_);
+	return $self;
+};
+
 
 sub BUILD {
 	my ($self) = @_;
-	$self->_create_cells;
+	$self->_create_children;
 }
 
-sub _create_cells {
+sub _create_children {
 	my ($self) = @_;
 	for (0..$self->cols-1) {
 		$self->add_cell( PDF::TableX::Cell->new(
@@ -64,29 +47,32 @@ sub _create_cells {
 
 sub add_cell {
 	my ($self, $cell) = @_;
-	push @{$self->{_cells}}, $cell;
+	push @{$self->{_children}}, $cell;
 }
 
 sub properties {
 	my ($self, @attrs) = @_;
-	@attrs = ( scalar(@attrs) ) ? @attrs : qw/padding border_width border_color border_style/;
+	@attrs = scalar(@attrs) ? @attrs : $self->attributes;
 	return ( map { $_ => $self->$_ } @attrs );
 }
 
 sub draw_content    {
 	my ($self, $x, $y, $gfx, $txt) = @_;
-	my $height = 0;
-	for (@{$self->{_cells}}) {
-		my ($w, $h) = $_->draw_content( $x, $y, $gfx, $txt );
+	my $height   = 0;
+	my $overflow = 0;
+	for (@{$self->{_children}}) {
+		my ($w, $h, $o) = $_->draw_content( $x, $y, $gfx, $txt );
 		$height = ($height > $h) ? $height : $h;
 		$x += ($w > $_->width ? $w : $_->width);
+		$overflow += $o;
 	}
-	return $height;
+	if (! $overflow ) { for (@{$self->{_children}}) { $_->reset_content } }
+	return ($height, $overflow);
 }
 
 sub draw_borders    {
 	my ($self, $x, $y, $gfx, $txt) = @_;
-	for (@{$self->{_cells}}) {
+	for (@{$self->{_children}}) {
 		$_->draw_borders( $x, $y, $gfx, $txt );
 		$x += $_->width;
 	}
@@ -94,7 +80,7 @@ sub draw_borders    {
 
 sub draw_background {
 	my ($self, $x, $y, $gfx, $txt) = @_;
-	for (@{$self->{_cells}}) {
+	for (@{$self->{_children}}) {
 		$_->draw_background( $x, $y, $gfx, $txt );
 		$x += $_->width;
 	}

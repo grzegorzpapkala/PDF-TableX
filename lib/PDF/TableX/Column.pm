@@ -6,46 +6,31 @@ use MooseX::Types;
 use PDF::TableX::Types qw/StyleDefinition/;
 use PDF::TableX::Cell;
 
-our $ATTRIBUTES = [ qw/padding border_width border_color border_style background_color width/ ];
+with 'PDF::TableX::Stylable';
 
-has rows	       => (is => 'ro', isa => 'Int', default => 0);
-has width        => (is => 'rw', isa => 'Num');
-has padding      => (is => 'rw', isa => StyleDefinition, coerce => 1, default => sub{[1,1,1,1]} );
-has border_width => (is => 'rw', isa => StyleDefinition, coerce => 1, default => sub{[1,1,1,1]} );
-has border_color => (is => 'rw', isa => StyleDefinition, coerce => 1, default => 'black' );
-has border_style => (is => 'rw', isa => StyleDefinition, coerce => 1, default => 'solid' );
-has background_color => (is => 'rw', isa => 'Str', default => '' );
+has rows  => (is => 'ro', isa => 'Int', default => 0);
+has width => (is => 'rw', isa => 'Num');
 
-has _cells	=> (is => 'ro', init_arg => undef, isa => 'ArrayRef', default => sub{[]});
+use overload '@{}' => sub { return $_[0]->{_children} }, fallback => 1;
 
-use overload '@{}' => sub { return $_[0]->{_cells} }, fallback => 1;
-
-# method modifiers
-for my $func ( @{ $ATTRIBUTES } ) {
-	around $func => sub {
-		my ($orig, $self, $value) = @_;
-		if ( $value ) {
-			$self->$orig($value);
-			for (@{$self->{_cells}}) {
-				$_->$func( $value );
-			}
-			return $self;
-		} else {
-			return $self->$orig;
-		}		
-	};
-}
-
+around 'width' => sub {
+	my $orig = shift;
+	my $self = shift;
+	return $self->$orig() unless @_;
+	for (@{ $self->{_children} }) { $_->width(@_) };
+	$self->$orig(@_);
+	return $self;
+};
 
 sub add_cell {
 	my ($self, $cell) = @_;
-	push @{$self->{_cells}}, $cell;
+	push @{$self->{_children}}, $cell;
 }
 
 sub get_min_width {
 	my ($self) = @_;
 	my $width = 0;
-	for my $cell_min_width ( map {$_->min_width} @{$self->{_cells}} ) {
+	for my $cell_min_width ( map {$_->min_width} @{$self->{_children}} ) {
 		$width = $cell_min_width if ($cell_min_width > $width);
 	}
 	return $width;
@@ -54,7 +39,7 @@ sub get_min_width {
 sub get_reg_width {
 	my ($self) = @_;
 	my $width = 0;
-	for my $cell_reg_width ( map {$_->reg_width} @{$self->{_cells}} ) {
+	for my $cell_reg_width ( map {$_->reg_width} @{$self->{_children}} ) {
 		$width = $cell_reg_width if ($cell_reg_width > $width);
 	}
 	return $width;
