@@ -8,6 +8,8 @@ license  'perl';
 requires 			 'PDF::API2';
 requires			 'Moose';
 requires			 'MooseX::Types';
+requires			 'MooseX::Types::Moose';
+requires 			 'Moose::Role';
 build_requires 'Test::More';
 
 auto_install;

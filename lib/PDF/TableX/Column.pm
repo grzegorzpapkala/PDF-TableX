@@ -48,24 +48,15 @@ sub get_reg_width {
 1;
 
 =head1 NAME
-PDF::TableX::Row
+PDF::TableX::Column
 
 =head1 VERSION
 Version 0.01
 =cut
 
 =head1 SYNOPSIS
-The module provides capabilities to create tabular structures in PDF files.
-It is similar to PDF::Table module, however extends its functionality adding OO interface
-and allowing placement of any element inside table cell such as image, another pdf, or nested table.
 
 =head1 FUNCTIONS
-
-=head2 BUILD
-=cut
-
-=head2 add_cell
-=cut
 
 =head1 AUTHOR
 Grzegorz Papkala, C<< <grzegorzpapkala at gmail.com> >>
