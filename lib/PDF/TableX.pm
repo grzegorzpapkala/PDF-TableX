@@ -13,7 +13,7 @@ use PDF::TableX::Cell;
 
 with 'PDF::TableX::Stylable';
 
-our $VERSION    = '0.01';
+our $VERSION    = '0.011';
 
 # public attrs
 has width         => (is => 'rw', isa => 'Num', default => 0);
