@@ -12,4 +12,5 @@ cover_db
 .DS_Store
 t/*.pdf
 inc/
+htmldocs/
 META.yml

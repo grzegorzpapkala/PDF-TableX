@@ -183,13 +183,16 @@ sub cycle_background_color {
 1;
 
 =head1 NAME
-PDF::TableX - Moose driven table generation module that is uses famous PDF::API2
+
+PDF::TableXMoose driven table generation module that is uses famous PDF::API2
 
 =head1 VERSION
+
 Version 0.01
-=cut
+
 
 =head1 SYNOPSIS
+
 The module provides capabilities to create tabular structures in PDF files.
 It is similar to PDF::Table module, however extends its functionality adding OO
 interface and allowing placement of any element inside table cell such as image,
@@ -197,32 +200,35 @@ another pdf, or nested table.
 
 Sample usage:
 
-		use PDF::API2;
-    use PDF::TableX;
+	use PDF::API2;
+	use PDF::TableX;
 
-		my $pdf		= PDF::API2->new();
-    my $table = PDF::TableX->new(40,40);     # create 40 x 40 table
-    $table
-    	->padding(3)                           # set padding for cells
-    	->border_width(2)                      # set border width
-    	->border_color('blue');                # set border color
-    $table[0][0]->content("Sample text");    # place "Sample text" in cell 0,0 (first cell in first row)
-    $table[0][1]->content("Some other text"; # place "Some other text" in cell 0,1
-    $table->draw($pdf, 1);                   # place table on the first page of pdf
+	my $pdf		= PDF::API2->new();
+	my $table = PDF::TableX->new(40,40);     # create 40 x 40 table
+	$table
+		->padding(3)                           # set padding for cells
+		->border_width(2)                      # set border width
+		->border_color('blue');                # set border color
+	$table[0][0]->content("Sample text");    # place "Sample text" in cell 0,0 (first cell in first row)
+	$table[0][1]->content("Some other text"; # place "Some other text" in cell 0,1
+	$table->draw($pdf, 1);                   # place table on the first page of pdf
 
-    $pdf->save_as('some/file.pdf');
-
+	$pdf->save_as('some/file.pdf');
 
 =head1 ATTRIBUTES
+
 All attributes when set return $self allowing chaining of the calls.
 
 =head2 Style Definitions
+
 Following attributes take as argument either array reference with four values describing the style
 in each cell side in followin order [TOP, RIGHT, BOTTOM, LEFT]. Alternatively a scalar value can be
 provided in which case it is coerced to ARRAY REF
 
 =over 4
+
 =item * padding => [1,1,1,1]
+
 	# set padding for all cells
 	$table->padding(2);
 	# the same as
@@ -235,29 +241,40 @@ provided in which case it is coerced to ARRAY REF
 	$table->[0][0]->padding(2);
 
 =item * border_width => [1,1,1,1]
+
 	$table->border_width(2);
 	$table->border_width([2,3,4,5]);
 
 =item * border_color => ['black','black','black','black']
+
 	$table->border_color('red');
 	$table->border_color(['#cccccc','white','green','blue']);
 
 =item * border_style => ['solid','solid','solid','solid']
+
 Currently the only supported style is 'solid'.
 
 =item * margin => [10/25.4*72,10/25.4*72,10/25.4*72,10/25.4*72]
+
 Margin is used currently to determine the space between top and bottom of the page.
+
 	$table->margin(20);
 	$table->margin([20,10,10,2]);
+
 =back
 
 Following attributes require single value.
+
 =over 4
+
 =item * background_color => ''
-		$table->background_color('blue');
+
+	$table->background_color('blue');
 		
 =item * text_align => 'left'
+
 Allowed values are: 'left', 'right', 'center', 'justify'
+
 	# set text align in whole table
 	$table->text_align('left');
 	# set text align in single row
@@ -266,60 +283,59 @@ Allowed values are: 'left', 'right', 'center', 'justify'
 	$table->col(0)->text_align('left');
 
 =item * font => 'Times'
-Allowed values are the names of PDF::API2 corefonts: 
 
-=over 8	
-=item * Courier
-=item * Courier-Bold
-=item * Courier-BoldOblique
-=item * Courier-Oblique
-=item * Helvetica
-=item * Helvetica-Bold
-=item * Helvetica-BoldOblique
-=item * Helvetica-Oblique
-=item * Symbol
-=item * Times-Bold
-=item * Times-BoldItalic
-=item * Times-Italic
-=item * Times-Roman
-=item * ZapfDingbats
-=back
+Allowed values are the names of PDF::API2 corefonts: Courier, Courier-Bold, Courier-BoldOblique,
+Courier-Oblique, Helvetica, Helvetica-Bold, Helvetica-BoldOblique, Helvetica-Oblique, Symbol,
+Times-Bold, Times-BoldItalic, Times-Italic, Times-Roman, ZapfDingbats
 
 	$table->font('ZapfDingbats');
 
 =item * font_color => 'black'
+
 	$table->font_color('green');
 
 =item * font_size => 12
+	
 	$table->font_size(10);
 	
 =back
-=cut
 
 =head2 Placing & Behaviour
+
 Following attributes control placing of the table and its behaviour
 
+
 =over 4
-=input * width width of the table
-=input * start_x x position of the table
-=input * start_y y position of the table
-=input * rows number of table rows
-=input * cols number of table columns
-=input * repeat_header shall the header be repeated on every new page (default is 0, set 1 to repeat)
+
+=item * width - width of the table
+
+=item * start_x - x position of the table
+
+=item * start_y - y position of the table
+
+=item * rows - number of table rows
+
+=item * cols - number of table columns
+
+=item * repeat_header - shall the header be repeated on every new page (default is 0, set 1 to repeat)
+
 =back
-=cut
 
 =head1 METHODS
+
 =head2 cycle_background_color
+
 Set the background colors of rows. The method takes the list of colors and applies them to
 subsequent rows. There is no limit to style e.g. only in odd/even fashio.
+
 	# set odd and even background colors to black and white
 	$table->cycle_background_color('black','white');
-	
+
 	# set the background color of rows to cycle with three colors: black, white, red
 	$table->cycle_background_color('black','white','red');
 
 =head1 EXTENDING THE MODULE
+
 PDF::TableX uses Moose::Role(s) to define the styles and placing of the table. They can be 
 relatively extended providing capabilites beyond those already available. Below code snipped
 creates the role that uses elliptical background shape instead of rectangle.
@@ -364,30 +380,19 @@ creates the role that uses elliptical background shape instead of rectangle.
 Grzegorz Papkala, C<< <grzegorzpapkala at gmail.com> >>
 
 =head1 BUGS
-Please report any bugs or feature requests to C<bug-pdf-tablex at rt.cpan.org>, or through
-the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=PDF-TableX>.  I will be notified, and then you'll
-automatically be notified of progress on your bug as I make changes.
 
+Please report any bugs or feature requests at: L<https://github.com/grzegorzpapkala/PDF-TableX/issues>
 
 =head1 SUPPORT
-You can find documentation for this module with the perldoc command.
-    perldoc PDF::TableX
 
-You can also look for information at:
-=over 4
-=item * RT: CPAN's request tracker
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=PDF-TableX>
-=item * AnnoCPAN: Annotated CPAN documentation
-L<http://annocpan.org/dist/PDF-TableX>
-=item * CPAN Ratings
-L<http://cpanratings.perl.org/d/PDF-TableX>
-=item * Search CPAN
-L<http://search.cpan.org/dist/PDF-TableX/>
-=back
+PDF::TableX is hosted on GitHub L<https://github.com/grzegorzpapkala/PDF-TableX>
+
 
 =head1 ACKNOWLEDGEMENTS
 
+
 =head1 COPYRIGHT & LICENSE
+
 Copyright 2013 Grzegorz Papkala, all rights reserved.
 
 This program is free software; you can redistribute it and/or modify it
