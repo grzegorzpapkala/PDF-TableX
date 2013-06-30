@@ -13,7 +13,7 @@ use PDF::TableX::Cell;
 
 with 'PDF::TableX::Stylable';
 
-our $VERSION    = '0.011';
+our $VERSION    = '0.012';
 
 # public attrs
 has width         => (is => 'rw', isa => 'Num', default => 0);
@@ -102,15 +102,17 @@ sub col {
 }
 
 sub draw {
-	my ($self, $pdf, $page_no) = @_;
-	my $page = $pdf->openpage($page_no) || $pdf->page;
-	$self->_set_col_widths();
+	my ($self, $pdf, $page, $y, $col_widths) = @_;
+	my $spanned = 0;
+	$self->{start_y} = $y || $self->{start_y};
+	$self->_set_col_widths($col_widths);
 	# get gfx, txt page objects in proper order to prevent from background hiding the text
 	my @states = ($page->gfx, $page->text, $page->gfx, $page->text, $page->gfx, $page->text);
 ROW:
 	for (@{$self->{_children}}) {
 		my ($row_height, $overflow) = $self->_draw_row( $_,  @states );
 		if ( $overflow ) {
+			$spanned++;
 			$page = $pdf->page;
 			$self->{start_y} = [ $page->get_mediabox ]->[3] - $self->margin->[0];
 			@states = ($page->gfx, $page->text, $page->gfx, $page->text, $page->gfx, $page->text);
@@ -123,6 +125,7 @@ ROW:
 			$self->{start_y} -= $row_height;
 		}
 	}
+	return ($page, $spanned, $self->{start_y});
 }
 
 sub _draw_row {
@@ -135,7 +138,15 @@ sub _draw_row {
 }
 
 sub _set_col_widths {
-	my ($self) = @_;
+	my ($self, $col_widths) = @_;
+	
+	if ( scalar(@{$col_widths}) ) {
+		for (0..$self->cols-1) {
+			$self->col($_)->width( $col_widths->[$_] );
+		}
+		return;
+	}
+	
 	my @min_col_widths = ();
 	my @reg_col_widths = ();
 	my @width_ratio    = ();
@@ -184,11 +195,11 @@ sub cycle_background_color {
 
 =head1 NAME
 
-PDF::TableXMoose driven table generation module that is uses famous PDF::API2
+PDF::TableX - Moose driven table generation module that is uses famous PDF::API2
 
 =head1 VERSION
 
-Version 0.01
+Version 0.012
 
 
 =head1 SYNOPSIS
