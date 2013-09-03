@@ -11,6 +11,7 @@ requires			 'MooseX::Types';
 requires			 'MooseX::Types::Moose';
 requires 			 'Moose::Role';
 build_requires 'Test::More';
+repository     'https://github.com/grzegorzpapkala/PDF-TableX';
 
 auto_install;
 
