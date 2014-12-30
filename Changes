@@ -1,6 +1,7 @@
 Revision history for PDF-TableX
 
 0.02
+        Fix PDF::TableX SYNOPSIS section in doc.
         Fix warning 'Use of qw(...) as parentheses is deprecated' (#87512).
 
 0.01    14.05.2013

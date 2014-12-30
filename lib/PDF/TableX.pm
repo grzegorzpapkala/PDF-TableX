@@ -214,17 +214,18 @@ Sample usage:
 	use PDF::API2;
 	use PDF::TableX;
 
-	my $pdf		= PDF::API2->new();
-	my $table = PDF::TableX->new(40,40);     # create 40 x 40 table
+	my $pdf = PDF::API2->new();
+	my $page = $pdf->page;
+	my $table = PDF::TableX->new(40,40);        # create 40 x 40 table
 	$table
-		->padding(3)                           # set padding for cells
-		->border_width(2)                      # set border width
-		->border_color('blue');                # set border color
-	$table[0][0]->content("Sample text");    # place "Sample text" in cell 0,0 (first cell in first row)
-	$table[0][1]->content("Some other text"; # place "Some other text" in cell 0,1
-	$table->draw($pdf, 1);                   # place table on the first page of pdf
+		->padding(3)                        # set padding for cells
+		->border_width(2)                   # set border width
+		->border_color('blue');             # set border color
+	$table->[0][0]->content("Sample text");     # place "Sample text" in cell 0,0 (first cell in first row)
+	$table->[0][1]->content("Some other text"); # place "Some other text" in cell 0,1
+	$table->draw($pdf, $page);                  # place table on the first page of pdf
 
-	$pdf->save_as('some/file.pdf');
+	$pdf->saveas('some/file.pdf');
 
 =head1 ATTRIBUTES
 
