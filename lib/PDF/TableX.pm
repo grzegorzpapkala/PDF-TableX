@@ -346,6 +346,34 @@ subsequent rows. There is no limit to style e.g. only in odd/even fashio.
 	# set the background color of rows to cycle with three colors: black, white, red
 	$table->cycle_background_color('black','white','red');
 
+=head2 BUILD
+
+ TODO
+
+=head2 add_row
+
+ TODO
+
+=head2 col
+
+ TODO
+
+=head2 draw
+
+ TODO
+
+=head2 is_last_in_col
+
+ TODO
+
+=head2 is_last_in_row
+
+ TODO
+
+=head2 properties
+
+ TODO
+
 =head1 EXTENDING THE MODULE
 
 PDF::TableX uses Moose::Role(s) to define the styles and placing of the table. They can be 

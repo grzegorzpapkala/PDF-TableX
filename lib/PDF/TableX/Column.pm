@@ -57,7 +57,19 @@ Version 0.01
 
 =head1 SYNOPSIS
 
-=head1 FUNCTIONS
+=head1 METHODS
+
+=head2 add_cell
+
+ TODO
+
+=head2 get_min_width
+
+ TODO
+
+=head2 get_reg_width
+
+ TODO
 
 =head1 AUTHOR
 

@@ -170,7 +170,27 @@ Version 0.01
 
 =head1 SYNOPSIS
 
-=head1 FUNCTIONS
+=head1 METHODS
+
+=head2 draw_background
+
+ TODO
+
+=head2 draw_borders
+
+ TODO
+
+=head2 draw_content
+
+ TODO
+
+=head2 get_text_width
+
+ TODO
+
+=head2 reset_content
+
+ TODO
 
 =head1 AUTHOR
 

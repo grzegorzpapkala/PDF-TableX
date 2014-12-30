@@ -108,7 +108,39 @@ Version 0.01
 
 =head1 SYNOPSIS
 
-=head1 FUNCTIONS
+=head1 METHODS
+
+=head2 BUILD
+
+ TODO
+
+=head2 add_cell
+
+ TODO
+
+=head2 draw_background
+
+ TODO
+
+=head2 draw_borders
+
+ TODO
+
+=head2 draw_content
+
+ TODO
+
+=head2 is_last_in_col
+
+ TODO
+
+=head2 is_last_in_row
+
+ TODO
+
+=head2 properties
+
+ TODO
 
 =head1 AUTHOR
 
