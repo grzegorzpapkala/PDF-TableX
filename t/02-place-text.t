@@ -1,6 +1,6 @@
 #!perl -T
 
-use Test::More;
+use Test::More tests => 4;
 
 use PDF::TableX;
 use PDF::API2;
