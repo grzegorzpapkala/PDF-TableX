@@ -2,6 +2,7 @@ Revision history for PDF-TableX
 
 0.02
         Fix PDF::TableX SYNOPSIS section in doc.
+        Fix tests. Bad calling of draw() method.
         Fix warning 'Use of qw(...) as parentheses is deprecated' (#87512).
         Fix warning with undefined $col_widths variable.
 

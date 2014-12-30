@@ -8,6 +8,7 @@ use PDF::API2;
 my $table = PDF::TableX->new(8,8);
 my $pdf		= PDF::API2->new();
 $pdf->mediabox('a4');
+my $page = $pdf->page;
 
 is_deeply( $table->padding, [1,1,1,1], 'Default padding settings');
 is_deeply( { $table->properties }, {
@@ -57,7 +58,7 @@ for my $i (0..$table->rows-1) {
 
 is($table->[0][1]->font_color, 'white');
 
-$table->draw($pdf, 1);
+$table->draw($pdf, $page);
 $pdf->saveas('t/01-simple-mesh.pdf');
 
 diag( "Testing PDF::TableX $PDF::TableX::VERSION, Perl $], $^X" );

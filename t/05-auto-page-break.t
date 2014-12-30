@@ -8,6 +8,7 @@ use PDF::API2;
 my $table = PDF::TableX->new(2,10);
 my $pdf		= PDF::API2->new();
 $pdf->mediabox('a4');
+my $page = $pdf->page;
 
 $table
 	->padding(10)
@@ -51,7 +52,7 @@ $table->col(1)
 	->border_width([0,0,2,2])
 	->text_align('right');
 
-$table->draw($pdf, 1);
+$table->draw($pdf, $page);
 $pdf->saveas('t/05-auto-page-break.pdf');
 
 diag( "Testing PDF::TableX $PDF::TableX::VERSION, Perl $], $^X" );
