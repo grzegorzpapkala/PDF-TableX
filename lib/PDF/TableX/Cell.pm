@@ -15,7 +15,7 @@ has content   => (is => 'rw', isa => 'Str', default=> '', trigger => sub { $_[0]
 
 has _overflow        => (is => 'ro', isa => 'Str', init_arg => undef, default => '');
 has _pdf_api_content => (is => 'ro', isa => class_type('PDF::API2::Page'), lazy => 1, builder => '_get_content');
-has _parent	         => (is => 'ro', isa => 'Object');
+has _parent          => (is => 'ro', isa => 'Object');
 has _row_idx         => (is => 'ro', isa => 'Int', default => 0);
 has _col_idx         => (is => 'ro', isa => 'Int', default => 0);
 
@@ -153,7 +153,7 @@ sub draw_background {
 		$gfx->fillcolor($self->background_color);
 		$gfx->rect($x, $y-$self->height, $self->width, $self->height);
 		$gfx->fill();
-	}	
+	}
 }
 
 1;

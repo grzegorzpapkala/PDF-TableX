@@ -6,7 +6,7 @@ use PDF::TableX;
 use PDF::API2;
 
 my $table = PDF::TableX->new(8,8);
-my $pdf		= PDF::API2->new();
+my $pdf = PDF::API2->new();
 $pdf->mediabox('a4');
 my $page = $pdf->page;
 
@@ -17,11 +17,11 @@ is_deeply( { $table->properties }, {
 	'border_color'     => ['black','black','black','black'],
 	'border_style'     => ['solid','solid','solid','solid'],
 	'background_color' => '',
-	'text_align'			 => 'left',
-	'font_size'				 => 12,
-	'font'     				 => 'Times',
-	'font_color'  		 => 'black',
-	'margin'					 => [10/25.4*72,10/25.4*72,10/25.4*72,10/25.4*72],
+	'text_align'       => 'left',
+	'font_size'        => 12,
+	'font'             => 'Times',
+	'font_color'       => 'black',
+	'margin'           => [10/25.4*72,10/25.4*72,10/25.4*72,10/25.4*72],
 }, 'Check all default style values' );
 
 $table->padding(10);

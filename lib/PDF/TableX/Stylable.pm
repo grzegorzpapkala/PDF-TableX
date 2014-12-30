@@ -9,8 +9,8 @@ has border_width     => (is => 'rw', isa => StyleDefinition, coerce => 1, defaul
 has border_color     => (is => 'rw', isa => StyleDefinition, coerce => 1, default => 'black' );
 has border_style     => (is => 'rw', isa => StyleDefinition, coerce => 1, default => 'solid' );
 has background_color => (is => 'rw', isa => 'Str', default => '' );
-has text_align	     => (is => 'rw', isa => 'Str', default => 'left');
-has font				     => (is => 'rw', isa => 'Any', default => 'Times');
+has text_align       => (is => 'rw', isa => 'Str', default => 'left');
+has font             => (is => 'rw', isa => 'Any', default => 'Times');
 has font_color       => (is => 'rw', isa => 'Str', default => 'black');
 has font_size        => (is => 'rw', isa => 'Num', default => 12);
 has margin           => (is => 'rw', isa => StyleDefinition, coerce => 1, default => (10 / 25.4 *72) );
@@ -28,7 +28,7 @@ for my $attr  ( __PACKAGE__->attributes ) {
 			return $self;
 		} else {
 			return $self->$orig;
-		}		
+		}
 	};
 }
 

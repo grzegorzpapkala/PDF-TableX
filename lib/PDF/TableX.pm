@@ -19,8 +19,8 @@ our $VERSION    = '0.012';
 has width         => (is => 'rw', isa => 'Num', default => 0);
 has start_x       => (is => 'rw', isa => 'Num', default => 0);
 has start_y       => (is => 'rw', isa => 'Num', default => 0);
-has rows	        => (is => 'ro', isa => 'Int', default => 0);
-has cols	        => (is => 'ro', isa => 'Int', default => 0);
+has rows          => (is => 'ro', isa => 'Int', default => 0);
+has cols          => (is => 'ro', isa => 'Int', default => 0);
 has repeat_header => (is => 'rw', isa => 'Bool', default => 0);
 
 # private attrs
@@ -130,7 +130,7 @@ ROW:
 
 sub _draw_row {
 	my ($self, $row, @states) = @_;
-	my ($row_height, $overflow) =	$row->draw_content($self->start_x, $self->start_y, $states[4], $states[5] );
+	my ($row_height, $overflow) = $row->draw_content($self->start_x, $self->start_y, $states[4], $states[5] );
 	$row->height( $row_height );
 	$row->draw_background($self->start_x, $self->start_y, $states[0], $states[1]);
 	$row->draw_borders($self->start_x, $self->start_y, $states[2], $states[3]);
@@ -368,7 +368,7 @@ creates the role that uses elliptical background shape instead of rectangle.
 	use PDF::API2;
 
 	my $table = PDF::TableX->new(2,2);
-	my $pdf		= PDF::API2->new();
+	my $pdf = PDF::API2->new();
 	$pdf->mediabox('a4');
 
 	# set some styles

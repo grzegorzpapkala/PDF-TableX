@@ -5,6 +5,7 @@ Revision history for PDF-TableX
         Fix tests. Bad calling of draw() method.
         Fix warning 'Use of qw(...) as parentheses is deprecated' (#87512).
         Fix warning with undefined $col_widths variable.
+        Remove obsolete tabs from code.
 
 0.01    14.05.2013
         First version, released on an unsuspecting world.

@@ -6,7 +6,7 @@ use PDF::TableX;
 use PDF::API2;
 
 my $table = PDF::TableX->new(2,10);
-my $pdf		= PDF::API2->new();
+my $pdf = PDF::API2->new();
 $pdf->mediabox('a4');
 my $page = $pdf->page;
 
