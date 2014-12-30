@@ -140,7 +140,7 @@ sub _draw_row {
 sub _set_col_widths {
 	my ($self, $col_widths) = @_;
 	
-	if ( scalar(@{$col_widths}) ) {
+	if ( defined $col_widths && scalar(@{$col_widths}) ) {
 		for (0..$self->cols-1) {
 			$self->col($_)->width( $col_widths->[$_] );
 		}
