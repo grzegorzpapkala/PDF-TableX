@@ -30,7 +30,7 @@ has _cols => (is => 'ro', init_arg => undef, isa => 'ArrayRef[ Object ]', defaul
 use overload '@{}' => sub { return $_[0]->{_children}; }, fallback => 1;
 
 # make some methods
-for my $attr qw/width repeat_header/ {
+for my $attr (qw/width repeat_header/) {
 	around $attr => sub {
 		my $orig = shift;
 		my $self = shift;
