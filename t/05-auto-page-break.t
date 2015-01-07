@@ -1,6 +1,6 @@
 #!perl -T
 
-use Test::More;
+use Test::More tests => 1;
 
 use PDF::TableX;
 use PDF::API2;
@@ -53,7 +53,11 @@ $table->col(1)
 	->text_align('right');
 
 $table->draw($pdf, $page);
+
+is($pdf->pages(), 4);
+
 $pdf->saveas('t/05-auto-page-break.pdf');
+
 
 diag( "Testing PDF::TableX $PDF::TableX::VERSION, Perl $], $^X" );
 

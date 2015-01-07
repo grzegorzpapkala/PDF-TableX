@@ -1,6 +1,6 @@
 #!perl -T
 
-use Test::More;
+use Test::More tests => 2;
 
 use PDF::TableX;
 use PDF::API2;
@@ -32,6 +32,9 @@ $table->[1][1]
 
 $table->draw($pdf, $page);
 $pdf->saveas('t/04-auto-width.pdf');
+
+is($table->[0][1]->content(), $texts->[1]);
+is($table->[1][0]->content(), $texts->[2]);
 
 diag( "Testing PDF::TableX $PDF::TableX::VERSION, Perl $], $^X" );
 

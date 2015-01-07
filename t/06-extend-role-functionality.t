@@ -32,7 +32,7 @@ sub _get_reg_width { 200 + $_[0]->padding->[1] + $_[0]->padding->[3]}
 
 
 use Test::More;
-use Moose::Util qw( apply_all_roles );
+use Moose::Util qw( apply_all_roles does_role);
 
 use PDF::TableX;
 use PDF::API2;
@@ -62,5 +62,8 @@ $table->draw($pdf, $page);
 $pdf->saveas('t/06-extend-role-functionality.pdf');
 
 diag( "Testing PDF::TableX $PDF::TableX::VERSION, Perl $], $^X" );
+
+is(does_role($table->[0][0], 'ElipsedBackground'), 1);
+is(does_role($table->[0][1], 'ElipsedBackground'), 1);
 
 done_testing;
