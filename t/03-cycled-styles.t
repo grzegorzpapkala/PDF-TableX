@@ -1,13 +1,14 @@
 #!perl -T
 
-use Test::More;
+use Test::More tests => 2;
 
 use PDF::TableX;
 use PDF::API2;
 
 my $table = PDF::TableX->new(5,10);
-my $pdf		= PDF::API2->new();
+my $pdf = PDF::API2->new();
 $pdf->mediabox('a4');
+my $page = $pdf->page;
 
 $table
 	->padding(20)
@@ -27,7 +28,7 @@ $table->[2][2]
 	->text_align('center')
 	->font('Helvetica-Bold');
 	
-$table->draw($pdf, 1);
+$table->draw($pdf, $page);
 $pdf->saveas('t/03-cycled-styles.pdf');
 
 diag( "Testing PDF::TableX $PDF::TableX::VERSION, Perl $], $^X" );

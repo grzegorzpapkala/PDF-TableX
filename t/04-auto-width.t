@@ -6,8 +6,9 @@ use PDF::TableX;
 use PDF::API2;
 
 my $table = PDF::TableX->new(2,2);
-my $pdf		= PDF::API2->new();
+my $pdf = PDF::API2->new();
 $pdf->mediabox('a4');
+my $page = $pdf->page;
 
 $table
 	->padding(10)
@@ -29,7 +30,7 @@ $table->[1][1]
 	->content($texts->[3])
 	->background_color('red');
 
-$table->draw($pdf, 1);
+$table->draw($pdf, $page);
 $pdf->saveas('t/04-auto-width.pdf');
 
 diag( "Testing PDF::TableX $PDF::TableX::VERSION, Perl $], $^X" );

@@ -8,12 +8,12 @@ with 'PDF::TableX::Stylable';
 
 use PDF::TableX::Cell;
 
-has cols	  => (is => 'ro', isa => 'Int', default => 0);
+has cols    => (is => 'ro', isa => 'Int', default => 0);
 has width   => (is => 'rw', isa => 'Num');
 has height  => (is => 'rw', isa => 'Num');
 
 has _row_idx    => (is => 'ro', isa => 'Int', default => 0);
-has _parent		  => (is => 'ro', isa => 'Object');
+has _parent     => (is => 'ro', isa => 'Object');
 
 use overload '@{}' => sub { return $_[0]->{_children} }, fallback => 1;
 
@@ -108,7 +108,39 @@ Version 0.01
 
 =head1 SYNOPSIS
 
-=head1 FUNCTIONS
+=head1 METHODS
+
+=head2 BUILD
+
+ TODO
+
+=head2 add_cell
+
+ TODO
+
+=head2 draw_background
+
+ TODO
+
+=head2 draw_borders
+
+ TODO
+
+=head2 draw_content
+
+ TODO
+
+=head2 is_last_in_col
+
+ TODO
+
+=head2 is_last_in_row
+
+ TODO
+
+=head2 properties
+
+ TODO
 
 =head1 AUTHOR
 

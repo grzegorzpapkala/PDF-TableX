@@ -38,8 +38,9 @@ use PDF::TableX;
 use PDF::API2;
 
 my $table = PDF::TableX->new(2,2);
-my $pdf		= PDF::API2->new();
+my $pdf = PDF::API2->new();
 $pdf->mediabox('a4');
+my $page = $pdf->page;
 
 $table
 	->padding(10)
@@ -57,7 +58,7 @@ apply_all_roles( $table->[1][1], 'ImageContent' );
 $table->[1][0]->content("t/06-extend-role-functionality.jpeg");
 $table->[1][1]->content("t/06-extend-role-functionality.jpeg");
 
-$table->draw($pdf, 1);
+$table->draw($pdf, $page);
 $pdf->saveas('t/06-extend-role-functionality.pdf');
 
 diag( "Testing PDF::TableX $PDF::TableX::VERSION, Perl $], $^X" );

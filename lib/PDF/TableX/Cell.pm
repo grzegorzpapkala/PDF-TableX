@@ -15,7 +15,7 @@ has content   => (is => 'rw', isa => 'Str', default=> '', trigger => sub { $_[0]
 
 has _overflow        => (is => 'ro', isa => 'Str', init_arg => undef, default => '');
 has _pdf_api_content => (is => 'ro', isa => class_type('PDF::API2::Page'), lazy => 1, builder => '_get_content');
-has _parent	         => (is => 'ro', isa => 'Object');
+has _parent          => (is => 'ro', isa => 'Object');
 has _row_idx         => (is => 'ro', isa => 'Int', default => 0);
 has _col_idx         => (is => 'ro', isa => 'Int', default => 0);
 
@@ -153,7 +153,7 @@ sub draw_background {
 		$gfx->fillcolor($self->background_color);
 		$gfx->rect($x, $y-$self->height, $self->width, $self->height);
 		$gfx->fill();
-	}	
+	}
 }
 
 1;
@@ -170,7 +170,91 @@ Version 0.01
 
 =head1 SYNOPSIS
 
-=head1 FUNCTIONS
+=head1 METHODS
+
+=head2 background_color
+
+ TODO
+
+=head2 border_color
+
+ TODO
+
+=head2 border_style
+
+ TODO
+
+=head2 border_width
+
+ TODO
+
+=head2 content
+
+ TODO
+
+=head2 draw_background
+
+ TODO
+
+=head2 draw_borders
+
+ TODO
+
+=head2 draw_content
+
+ TODO
+
+=head2 font
+
+ TODO
+
+=head2 font_color
+
+ TODO
+
+=head2 font_size
+
+ TODO
+
+=head2 get_text_width
+
+ TODO
+
+=head2 height
+
+ TODO
+
+=head2 margin
+
+ TODO
+
+=head2 meta
+
+ TODO
+
+=head2 min_width
+
+ TODO
+
+=head2 padding
+
+ TODO
+
+=head2 reg_width
+
+ TODO
+
+=head2 reset_content
+
+ TODO
+
+=head2 text_align
+
+ TODO
+
+=head2 width
+
+ TODO
 
 =head1 AUTHOR
 

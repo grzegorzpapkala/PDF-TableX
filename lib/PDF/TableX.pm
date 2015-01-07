@@ -19,8 +19,8 @@ our $VERSION    = '0.012';
 has width         => (is => 'rw', isa => 'Num', default => 0);
 has start_x       => (is => 'rw', isa => 'Num', default => 0);
 has start_y       => (is => 'rw', isa => 'Num', default => 0);
-has rows	        => (is => 'ro', isa => 'Int', default => 0);
-has cols	        => (is => 'ro', isa => 'Int', default => 0);
+has rows          => (is => 'ro', isa => 'Int', default => 0);
+has cols          => (is => 'ro', isa => 'Int', default => 0);
 has repeat_header => (is => 'rw', isa => 'Bool', default => 0);
 
 # private attrs
@@ -30,7 +30,7 @@ has _cols => (is => 'ro', init_arg => undef, isa => 'ArrayRef[ Object ]', defaul
 use overload '@{}' => sub { return $_[0]->{_children}; }, fallback => 1;
 
 # make some methods
-for my $attr qw/width repeat_header/ {
+for my $attr (qw/width repeat_header/) {
 	around $attr => sub {
 		my $orig = shift;
 		my $self = shift;
@@ -130,7 +130,7 @@ ROW:
 
 sub _draw_row {
 	my ($self, $row, @states) = @_;
-	my ($row_height, $overflow) =	$row->draw_content($self->start_x, $self->start_y, $states[4], $states[5] );
+	my ($row_height, $overflow) = $row->draw_content($self->start_x, $self->start_y, $states[4], $states[5] );
 	$row->height( $row_height );
 	$row->draw_background($self->start_x, $self->start_y, $states[0], $states[1]);
 	$row->draw_borders($self->start_x, $self->start_y, $states[2], $states[3]);
@@ -140,7 +140,7 @@ sub _draw_row {
 sub _set_col_widths {
 	my ($self, $col_widths) = @_;
 	
-	if ( scalar(@{$col_widths}) ) {
+	if ( defined $col_widths && scalar(@{$col_widths}) ) {
 		for (0..$self->cols-1) {
 			$self->col($_)->width( $col_widths->[$_] );
 		}
@@ -214,17 +214,18 @@ Sample usage:
 	use PDF::API2;
 	use PDF::TableX;
 
-	my $pdf		= PDF::API2->new();
-	my $table = PDF::TableX->new(40,40);     # create 40 x 40 table
+	my $pdf = PDF::API2->new();
+	my $page = $pdf->page;
+	my $table = PDF::TableX->new(40,40);        # create 40 x 40 table
 	$table
-		->padding(3)                           # set padding for cells
-		->border_width(2)                      # set border width
-		->border_color('blue');                # set border color
-	$table[0][0]->content("Sample text");    # place "Sample text" in cell 0,0 (first cell in first row)
-	$table[0][1]->content("Some other text"; # place "Some other text" in cell 0,1
-	$table->draw($pdf, 1);                   # place table on the first page of pdf
+		->padding(3)                        # set padding for cells
+		->border_width(2)                   # set border width
+		->border_color('blue');             # set border color
+	$table->[0][0]->content("Sample text");     # place "Sample text" in cell 0,0 (first cell in first row)
+	$table->[0][1]->content("Some other text"); # place "Some other text" in cell 0,1
+	$table->draw($pdf, $page);                  # place table on the first page of pdf
 
-	$pdf->save_as('some/file.pdf');
+	$pdf->saveas('some/file.pdf');
 
 =head1 ATTRIBUTES
 
@@ -345,6 +346,34 @@ subsequent rows. There is no limit to style e.g. only in odd/even fashio.
 	# set the background color of rows to cycle with three colors: black, white, red
 	$table->cycle_background_color('black','white','red');
 
+=head2 BUILD
+
+ TODO
+
+=head2 add_row
+
+ TODO
+
+=head2 col
+
+ TODO
+
+=head2 draw
+
+ TODO
+
+=head2 is_last_in_col
+
+ TODO
+
+=head2 is_last_in_row
+
+ TODO
+
+=head2 properties
+
+ TODO
+
 =head1 EXTENDING THE MODULE
 
 PDF::TableX uses Moose::Role(s) to define the styles and placing of the table. They can be 
@@ -367,7 +396,7 @@ creates the role that uses elliptical background shape instead of rectangle.
 	use PDF::API2;
 
 	my $table = PDF::TableX->new(2,2);
-	my $pdf		= PDF::API2->new();
+	my $pdf = PDF::API2->new();
 	$pdf->mediabox('a4');
 
 	# set some styles
