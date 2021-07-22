@@ -4,28 +4,28 @@ author:
   - 'Grzegorz Papkala, C<< <grzegorzpapkala at gmail.com> >>'
   - 'Grzegorz Papkala <grzegorzpapkala@gmail.com>'
 build_requires:
-  ExtUtils::MakeMaker: 6.36
-  Test::More: 0
+  ExtUtils::MakeMaker: '6.36'
+  Test::More: '0'
 configure_requires:
-  ExtUtils::MakeMaker: 0
+  ExtUtils::MakeMaker: '0'
 dynamic_config: 0
-generated_by: 'Module::Install version 1.06, CPAN::Meta::Converter version 2.120921'
+generated_by: 'Module::Install version 1.19, CPAN::Meta::Converter version 2.142690'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
-  version: 1.4
+  version: '1.4'
 name: PDF-TableX
 no_index:
   directory:
     - inc
     - t
 requires:
-  Moose: 0
-  Moose::Role: 0
-  MooseX::Types: 0
-  MooseX::Types::Moose: 0
-  PDF::API2: 0
-  Test::More: 0
+  Moose: '0'
+  Moose::Role: '0'
+  MooseX::Types: '0'
+  MooseX::Types::Moose: '0'
+  PDF::API2: '0'
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.013
+  repository: https://github.com/grzegorzpapkala/PDF-TableX
+version: '0.014'

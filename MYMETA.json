@@ -5,7 +5,7 @@
       "Grzegorz Papkala <grzegorzpapkala@gmail.com>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Module::Install version 1.06, CPAN::Meta::Converter version 2.120921",
+   "generated_by" : "Module::Install version 1.19, CPAN::Meta::Converter version 2.142690",
    "license" : [
       "perl_5"
    ],
@@ -38,8 +38,7 @@
             "Moose::Role" : "0",
             "MooseX::Types" : "0",
             "MooseX::Types::Moose" : "0",
-            "PDF::API2" : "0",
-            "Test::More" : "0"
+            "PDF::API2" : "0"
          }
       }
    },
@@ -47,7 +46,10 @@
    "resources" : {
       "license" : [
          "http://dev.perl.org/licenses/"
-      ]
+      ],
+      "repository" : {
+         "url" : "https://github.com/grzegorzpapkala/PDF-TableX"
+      }
    },
-   "version" : "0.013"
+   "version" : "0.014"
 }
